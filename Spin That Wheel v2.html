@@ -3,432 +3,567 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planificateur Daily Scrum</title>
+  <title>Daily Wheel — Planificateur Scrum</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%230078d4'/><text y='68' x='50' text-anchor='middle' font-size='58' font-family='serif'>🎲</text></svg>">
   <style>
+    /* ── Variables ─────────────────────────────────────────────────────────── */
     :root {
-      --primary: #0078d4;
-      --primary-dark: #005ea2;
-      --background: #f4f9ff;
-      --card-bg: #ffffff;
-      --text-color: #333333;
-      --border-radius: 8px;
-      --indispo-bg: #fff8f0;
-      --indispo-border: #f0c070;
-      --indispo-tag-bg: #fff0d0;
-      --indispo-tag-border: #e0a030;
-      --excl-bg: #f0f7ff;
-      --excl-border: #b0d0f0;
-      --excl-tag-bg: #ddeeff;
-      --excl-tag-border: #80b8e8;
+      --primary:        #0078d4;
+      --primary-dark:   #005ea2;
+      --primary-light:  #e8f4ff;
+      --accent:         #38b2ac;
+      --accent-dark:    #2c908a;
+      --background:     #eef4fb;
+      --card-bg:        #ffffff;
+      --text-color:     #1e293b;
+      --text-muted:     #64748b;
+      --border:         #e2e8f0;
+      --border-radius:  12px;
+      --radius-sm:      7px;
+      --shadow-card:    0 4px 24px rgba(0,120,212,.10), 0 1px 4px rgba(0,0,0,.06);
+      --shadow-btn:     0 2px 8px rgba(0,120,212,.25);
+      --indispo-bg:       #fffbeb;
+      --indispo-border:   #fcd34d;
+      --indispo-tag-bg:   #fef3c7;
+      --indispo-tag-border:#f59e0b;
+      --excl-bg:          #eff6ff;
+      --excl-border:      #bfdbfe;
+      --excl-tag-bg:      #dbeafe;
+      --excl-tag-border:  #93c5fd;
     }
+
+    /* ── Reset / Base ──────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      background-color: var(--background);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--background);
       color: var(--text-color);
+      min-height: 100vh;
       display: flex;
-      justify-content: center;
-      padding: 2em;
+      flex-direction: column;
+      align-items: center;
+      padding: 2.5em 1.5em 4em;
     }
 
+    /* ── Header ────────────────────────────────────────────────────────────── */
+    .app-header {
+      width: 100%;
+      max-width: 780px;
+      margin-bottom: 1.8em;
+      display: flex;
+      align-items: center;
+      gap: 1em;
+    }
+    .app-header-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.7em;
+      box-shadow: 0 4px 14px rgba(0,120,212,.3);
+      flex-shrink: 0;
+    }
+    .app-header-text h1 {
+      font-size: 1.55em;
+      font-weight: 700;
+      color: var(--text-color);
+      letter-spacing: -.02em;
+    }
+    .app-header-text p {
+      font-size: 0.82em;
+      color: var(--text-muted);
+      margin-top: .1em;
+    }
+
+    /* ── Container ─────────────────────────────────────────────────────────── */
     .container {
       width: 100%;
-      max-width: 760px;
+      max-width: 780px;
     }
 
+    /* ── Card ──────────────────────────────────────────────────────────────── */
     .card {
-      background-color: var(--card-bg);
-      padding: 1.5em;
+      background: var(--card-bg);
       border-radius: var(--border-radius);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-      margin-bottom: 2em;
+      box-shadow: var(--shadow-card);
+      padding: 1.8em;
+      margin-bottom: 1.5em;
+      border: 1px solid var(--border);
+    }
+    .card-title {
+      font-size: 0.7em;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--text-muted);
+      margin-bottom: 1em;
     }
 
-    h1 {
-      color: var(--primary);
-      margin-bottom: 0.5em;
-      display: flex;
-      align-items: center;
-      gap: 0.5em;
-      font-size: 1.8em;
-    }
-
-    h2 {
-      color: var(--primary);
-      margin-top: 0;
-      margin-bottom: 0.5em;
-    }
-
-    label {
-      margin-right: 0.5em;
-    }
-
+    /* ── Buttons ───────────────────────────────────────────────────────────── */
     button {
-      margin-top: 1em;
-      padding: 0.8em 1.2em;
-      font-size: 1em;
-      background-color: var(--primary);
-      color: #ffffff;
-      border: none;
-      border-radius: var(--border-radius);
-      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 0.4em;
+      gap: .4em;
+      padding: .65em 1.1em;
+      font-size: .92em;
+      font-family: inherit;
+      font-weight: 600;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: transform .12s, box-shadow .12s, filter .12s;
+      box-shadow: var(--shadow-btn);
     }
-    button:hover { background-color: var(--primary-dark); }
-    button:active { transform: translateY(1px); }
+    button:hover  { filter: brightness(1.08); box-shadow: 0 4px 14px rgba(0,120,212,.35); }
+    button:active { transform: translateY(1px); box-shadow: none; }
 
-    /* Options row */
-    .options-row {
+    /* ── Add-person row ────────────────────────────────────────────────────── */
+    .add-person {
+      display: flex;
+      gap: .6em;
+      margin-bottom: .35em;
+    }
+    .add-person input[type="text"] {
+      flex: 1;
+      padding: .65em .9em;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: .95em;
+      font-family: inherit;
+      background: #f8fafc;
+      color: var(--text-color);
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .add-person input[type="text"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0,120,212,.12);
+    }
+    .add-person button { margin-top: 0; }
+    .add-person-hint {
+      font-size: .75em;
+      color: var(--text-muted);
+      margin-bottom: .9em;
+    }
+
+    /* ── Participants table ─────────────────────────────────────────────────── */
+    .table-wrapper {
+      border: 1.5px solid var(--border);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      margin-bottom: .3em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card-bg);
+    }
+    th, td {
+      padding: .75em .9em;
+      text-align: left;
+    }
+    thead th {
+      background: var(--primary);
+      color: #fff;
+      font-size: .78em;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+    tbody tr {
+      border-top: 1px solid var(--border);
+      transition: background .1s;
+    }
+    tbody tr:not(.indispo-row):hover { background: #f8faff; }
+    tbody tr:nth-child(even):not(.indispo-row) { background: #fafcff; }
+    tbody tr:nth-child(odd):not(.indispo-row)  { background: #ffffff; }
+
+    .participants-table td { vertical-align: middle; font-size: .93em; }
+    .participants-table td:first-child { width: 42%; }
+
+    .inactive td { opacity: .55; text-decoration: line-through; }
+    .inactive.indispo-row td { text-decoration: none; }
+
+    /* ── Badge indispos ────────────────────────────────────────────────────── */
+    .indispo-badge {
+      display: inline-block;
+      background: #f59e0b;
+      color: #fff;
+      font-size: .67em;
+      font-weight: 700;
+      padding: .18em .5em;
+      border-radius: 20px;
+      vertical-align: middle;
+      margin-left: .4em;
+      letter-spacing: .02em;
+    }
+
+    /* ── Action buttons ────────────────────────────────────────────────────── */
+    .action-btn {
+      background: none;
+      border: none;
+      box-shadow: none;
+      cursor: pointer;
+      font-size: 1.05em;
+      padding: .25em .3em;
+      border-radius: 5px;
+      transition: background .12s, color .12s;
+      margin-right: .1em;
+      color: var(--text-muted);
+    }
+    .action-btn:hover { background: var(--primary-light); color: var(--primary); box-shadow: none; filter: none; }
+    .action-btn.delete-btn:hover { background: #fee2e2; color: #dc2626; }
+    .action-btn.indispo-btn { font-size: .95em; }
+
+    /* ── Toggle / checkbox ─────────────────────────────────────────────────── */
+    input[type="checkbox"] {
+      accent-color: var(--primary);
+      width: 1em;
+      height: 1em;
+      cursor: pointer;
+    }
+
+    /* ── Options bar ───────────────────────────────────────────────────────── */
+    .options-bar {
       display: flex;
       flex-wrap: wrap;
-      gap: 1.2em;
+      gap: 1em 1.6em;
       align-items: center;
-      margin-top: 0.8em;
+      padding: .9em 1.1em;
+      background: #f8fafc;
+      border: 1.5px solid var(--border);
+      border-radius: var(--border-radius);
+      margin-bottom: .8em;
     }
-    .options-row label {
-      font-size: 0.9em;
-      margin-right: 0;
-    }
-    .options-row .date-group {
+    .options-bar label {
+      font-size: .85em;
+      color: var(--text-color);
+      font-weight: 500;
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 0.5em;
+      gap: .45em;
     }
-    .options-row input[type="date"] {
-      padding: 0.4em 0.6em;
-      border: 1px solid #ccd4e0;
-      border-radius: var(--border-radius);
-      font-size: 0.9em;
-      background-color: #f9fbfe;
+    .options-bar .date-group {
+      display: flex;
+      align-items: center;
+      gap: .5em;
+    }
+    .options-bar .date-group label { margin: 0; }
+    .options-bar input[type="date"] {
+      padding: .38em .65em;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: .85em;
       font-family: inherit;
+      background: #fff;
+      color: var(--text-color);
+      transition: border-color .15s;
+    }
+    .options-bar input[type="date"]:focus {
+      outline: none;
+      border-color: var(--primary);
     }
 
-    /* Section exclusions groupe */
+    /* ── Group exclusions ──────────────────────────────────────────────────── */
     .group-excl-toggle {
-      margin-top: 0.9em;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 0.5em;
+      gap: .4em;
       cursor: pointer;
       user-select: none;
-      width: fit-content;
+      padding: .3em .5em;
+      border-radius: var(--radius-sm);
+      transition: background .12s;
+      margin-bottom: .4em;
     }
+    .group-excl-toggle:hover { background: var(--primary-light); }
     .group-excl-toggle-label {
-      font-size: 0.88em;
-      color: var(--primary);
+      font-size: .83em;
       font-weight: 600;
-      text-decoration: underline dotted;
+      color: var(--primary);
     }
     .group-excl-toggle-badge {
       display: inline-block;
-      background-color: var(--primary);
+      background: var(--primary);
       color: #fff;
-      font-size: 0.68em;
+      font-size: .65em;
       font-weight: 700;
-      padding: 0.1em 0.45em;
-      border-radius: 10px;
-      vertical-align: middle;
+      padding: .12em .48em;
+      border-radius: 20px;
     }
     .group-excl-arrow {
-      font-size: 0.75em;
+      font-size: .7em;
       color: var(--primary);
-      transition: transform 0.15s;
+      transition: transform .18s;
     }
     .group-excl-arrow.open { transform: rotate(90deg); }
 
     .group-excl-panel {
       display: none;
-      margin-top: 0.6em;
-      background-color: var(--excl-bg);
-      border: 1px solid var(--excl-border);
+      background: var(--excl-bg);
+      border: 1.5px solid var(--excl-border);
       border-radius: var(--border-radius);
-      padding: 0.8em 1em;
+      padding: 1em 1.2em;
+      margin-bottom: .5em;
+      animation: slideDown .15s ease;
     }
     .group-excl-panel.open { display: block; }
 
-    .group-excl-panel-title {
-      font-size: 0.82em;
-      font-weight: 600;
-      color: #2060a0;
-      margin-bottom: 0.6em;
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
+    .group-excl-panel-title {
+      font-size: .78em;
+      font-weight: 600;
+      color: #1e40af;
+      margin-bottom: .7em;
+    }
     .group-excl-form {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5em;
+      gap: .5em;
       align-items: center;
-      margin-bottom: 0.7em;
+      margin-bottom: .7em;
     }
-    .group-excl-form label {
-      font-size: 0.82em;
-      color: #444;
-      margin-right: 0;
-    }
+    .group-excl-form label { font-size: .8em; color: #374151; margin-right: 0; }
     .group-excl-form select,
     .group-excl-form input[type="number"],
     .group-excl-form input[type="date"] {
-      padding: 0.35em 0.5em;
-      border: 1px solid #a0c0e0;
-      border-radius: 5px;
-      font-size: 0.85em;
-      background-color: #f5faff;
+      padding: .32em .55em;
+      border: 1.5px solid var(--excl-border);
+      border-radius: var(--radius-sm);
+      font-size: .82em;
       font-family: inherit;
+      background: #fff;
+      color: var(--text-color);
     }
-    .group-excl-form input[type="number"] { width: 4em; }
+    .group-excl-form input[type="number"] { width: 4.2em; }
     .group-excl-form button {
       margin-top: 0;
-      padding: 0.35em 0.8em;
-      font-size: 0.85em;
-      background-color: var(--primary);
+      padding: .32em .8em;
+      font-size: .82em;
+      background: var(--primary);
+      box-shadow: 0 2px 6px rgba(0,120,212,.2);
     }
-    .group-excl-form button:hover { background-color: var(--primary-dark); }
 
-    .group-excl-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4em;
-    }
+    .group-excl-tags { display: flex; flex-wrap: wrap; gap: .4em; }
     .group-excl-tag {
       display: inline-flex;
       align-items: center;
-      gap: 0.3em;
-      background-color: var(--excl-tag-bg);
+      gap: .3em;
+      background: var(--excl-tag-bg);
       border: 1px solid var(--excl-tag-border);
-      border-radius: 4px;
-      padding: 0.2em 0.5em;
-      font-size: 0.8em;
-      color: #1a4a7a;
+      border-radius: 20px;
+      padding: .22em .65em;
+      font-size: .77em;
+      color: #1e40af;
+      font-weight: 500;
     }
     .group-excl-tag button {
-      margin-top: 0;
-      padding: 0;
-      background: none;
-      color: #1a5090;
-      font-size: 0.9em;
-      border: none;
-      cursor: pointer;
-      line-height: 1;
+      margin-top: 0; padding: 0;
+      background: none; box-shadow: none; filter: none;
+      color: #60a5fa; font-size: .85em; border: none; cursor: pointer; line-height: 1;
     }
-    .group-excl-tag button:hover { color: #c82333; background: none; }
-    .group-excl-empty {
-      font-size: 0.82em;
-      color: #999;
-      font-style: italic;
-    }
+    .group-excl-tag button:hover { color: #dc2626; background: none; box-shadow: none; filter: none; }
+    .group-excl-empty { font-size: .78em; color: var(--text-muted); font-style: italic; }
 
-    /* Tableau participants */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1em;
-      background-color: var(--card-bg);
-      border-radius: var(--border-radius);
-      overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    }
-    th, td {
-      padding: 0.8em;
-      text-align: left;
-    }
-    th {
-      background-color: var(--primary);
-      color: #ffffff;
-    }
-    tbody tr:nth-child(even):not(.indispo-row) { background-color: #f7faff; }
-    tbody tr:nth-child(odd):not(.indispo-row)  { background-color: #ffffff; }
-
-    .participants-table th { background-color: var(--primary-dark); }
-    .participants-table td {
-      padding: 0.6em;
-      vertical-align: middle;
-    }
-    .participants-table td:first-child { width: 40%; }
-
-    .inactive td {
-      opacity: 0.6;
-      text-decoration: line-through;
-    }
-    .inactive.indispo-row td { text-decoration: none; }
-
-    /* Ajout participant */
-    .add-person {
-      display: flex;
-      gap: 0.5em;
-      margin-bottom: 0.4em;
-      flex-wrap: wrap;
-    }
-    .add-person input[type="text"] {
-      flex: 1;
-      padding: 0.6em;
-      border: 1px solid #ccd4e0;
-      border-radius: var(--border-radius);
-      background-color: #f9fbfe;
-      font-size: 1em;
-    }
-    .add-person button {
-      margin-top: 0;
-      padding: 0.6em 1.2em;
-    }
-    .add-person-hint {
-      font-size: 0.78em;
-      color: #888;
-      margin-bottom: 0.8em;
-    }
-
-    /* Badge indispos sur la ligne */
-    .indispo-badge {
-      display: inline-block;
-      background-color: #f59e0b;
-      color: #fff;
-      font-size: 0.7em;
-      font-weight: 700;
-      padding: 0.15em 0.45em;
-      border-radius: 10px;
-      vertical-align: middle;
-      margin-left: 0.4em;
-      letter-spacing: 0.02em;
-    }
-
-    /* Boutons d'action */
-    .action-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 1.1em;
-      margin-right: 0.3em;
-      padding: 0.2em;
-    }
-    .action-btn.edit-btn:hover   { color: var(--primary); }
-    .action-btn.delete-btn:hover { color: #c82333; }
-    .action-btn.indispo-btn { font-size: 1em; }
-    .action-btn.indispo-btn:hover { color: #d07000; }
-
-    /* Panneau indispos inline */
-    .indispo-row td {
-      padding: 0;
-      background-color: var(--indispo-bg) !important;
-    }
+    /* ── Indispo panel inline ──────────────────────────────────────────────── */
+    .indispo-row td { padding: 0; background: var(--indispo-bg) !important; border-top: none !important; }
     .indispo-panel {
-      padding: 0.8em 1em;
-      border-top: 1px solid var(--indispo-border);
-      border-bottom: 1px solid var(--indispo-border);
+      padding: .9em 1.1em;
+      border-top: 2px solid var(--indispo-border);
     }
     .indispo-panel-title {
-      font-weight: 600;
-      font-size: 0.85em;
-      color: #a06000;
-      margin-bottom: 0.6em;
+      font-weight: 700;
+      font-size: .78em;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: #92400e;
+      margin-bottom: .6em;
     }
-
     .indispo-form {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5em;
+      gap: .45em;
       align-items: center;
-      margin-bottom: 0.7em;
+      margin-bottom: .7em;
     }
-    .indispo-form label {
-      font-size: 0.82em;
-      color: #555;
-      margin-right: 0;
-    }
-    .indispo-form input[type="date"] {
-      padding: 0.35em 0.5em;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 0.85em;
-      background-color: #fffdf7;
-      font-family: inherit;
-    }
+    .indispo-form label { font-size: .8em; color: #555; margin-right: 0; }
+    .indispo-form input[type="date"],
     .indispo-form select {
-      padding: 0.35em 0.5em;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 0.85em;
-      background-color: #fffdf7;
+      padding: .32em .55em;
+      border: 1.5px solid var(--indispo-border);
+      border-radius: var(--radius-sm);
+      font-size: .82em;
       font-family: inherit;
+      background: #fff;
     }
     .indispo-form button {
       margin-top: 0;
-      padding: 0.35em 0.8em;
-      font-size: 0.85em;
-      background-color: #e08010;
+      padding: .32em .8em;
+      font-size: .82em;
+      background: #f59e0b;
+      box-shadow: 0 2px 6px rgba(245,158,11,.25);
     }
-    .indispo-form button:hover { background-color: #b86000; }
+    .indispo-form button:hover { filter: brightness(1.08); }
 
-    .indispo-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4em;
-    }
+    .indispo-tags { display: flex; flex-wrap: wrap; gap: .4em; }
     .indispo-tag {
       display: inline-flex;
       align-items: center;
-      gap: 0.3em;
-      background-color: var(--indispo-tag-bg);
+      gap: .3em;
+      background: var(--indispo-tag-bg);
       border: 1px solid var(--indispo-tag-border);
-      border-radius: 4px;
-      padding: 0.2em 0.5em;
-      font-size: 0.8em;
-      color: #7a4a00;
+      border-radius: 20px;
+      padding: .22em .65em;
+      font-size: .77em;
+      color: #92400e;
+      font-weight: 500;
     }
     .indispo-tag button {
-      margin-top: 0;
-      padding: 0;
-      background: none;
-      color: #a06000;
-      font-size: 0.9em;
-      border: none;
-      cursor: pointer;
-      line-height: 1;
+      margin-top: 0; padding: 0;
+      background: none; box-shadow: none; filter: none;
+      color: #f59e0b; font-size: .85em; border: none; cursor: pointer; line-height: 1;
     }
-    .indispo-tag button:hover { color: #c82333; background: none; }
-    .indispo-empty {
-      font-size: 0.82em;
-      color: #999;
-      font-style: italic;
+    .indispo-tag button:hover { color: #dc2626; background: none; box-shadow: none; filter: none; }
+    .indispo-empty { font-size: .78em; color: var(--text-muted); font-style: italic; }
+
+    /* ── Launch button ─────────────────────────────────────────────────────── */
+    .btn-launch {
+      width: 100%;
+      justify-content: center;
+      padding: .85em 1.4em;
+      font-size: 1em;
+      font-weight: 700;
+      background: var(--primary);
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 18px rgba(0,120,212,.28);
+      letter-spacing: .01em;
+      margin-top: 1em;
+    }
+    .btn-launch:hover { box-shadow: 0 6px 24px rgba(0,120,212,.38); }
+
+    /* ── Planning result ───────────────────────────────────────────────────── */
+    .result-card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      animation: fadeUp .2s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .result-header {
+      background: var(--primary);
+      padding: .9em 1.3em;
+      color: #fff;
+      font-weight: 700;
+      font-size: .95em;
+      display: flex;
+      align-items: center;
+      gap: .5em;
+    }
+    .planning-table { width: 100%; border-collapse: collapse; }
+    .planning-table th {
+      background: #f1f5f9;
+      color: var(--text-muted);
+      font-size: .75em;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      padding: .65em 1.1em;
+      border-bottom: 1.5px solid var(--border);
+    }
+    .planning-table td {
+      padding: .72em 1.1em;
+      border-top: 1px solid var(--border);
+      font-size: .93em;
+    }
+    .planning-table tbody tr:hover { background: #f8faff; }
+    .planning-table td:first-child { color: var(--text-muted); font-size: .88em; }
+    .planning-table td:last-child  { font-weight: 600; color: var(--text-color); }
+
+    .result-warning {
+      padding: .7em 1.1em;
+      font-size: .83em;
+      color: #92400e;
+      background: var(--indispo-bg);
+      border-top: 1px solid var(--indispo-border);
+      display: flex;
+      align-items: center;
+      gap: .4em;
     }
 
-    @media (max-width: 480px) {
-      h1 { font-size: 1.4em; }
-      button { width: 100%; justify-content: center; }
-      .options-row { flex-direction: column; align-items: flex-start; }
+    /* ── Responsive ────────────────────────────────────────────────────────── */
+    @media (max-width: 520px) {
+      body { padding: 1.2em .8em 3em; }
+      .app-header-text h1 { font-size: 1.25em; }
+      .btn-launch { font-size: .95em; }
+      .options-bar { flex-direction: column; align-items: flex-start; }
     }
   </style>
 </head>
 <body>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="app-header-icon">🎲</div>
+    <div class="app-header-text">
+      <h1>Daily Wheel</h1>
+      <p>Planificateur de Daily Scrum — ordre aléatoire, contraintes respectées</p>
+    </div>
+  </header>
+
   <div class="container">
+
+    <!-- Carte participants -->
     <div class="card">
-      <h1><span aria-hidden="true">🔀</span> Sélection Daily Scrum</h1>
+      <div class="card-title">Participants</div>
 
       <div class="add-person">
         <input type="text" id="newName" placeholder="Ajouter un ou plusieurs participants…">
-        <button id="addButton">Ajouter</button>
+        <button id="addButton">＋ Ajouter</button>
       </div>
       <div class="add-person-hint">Plusieurs noms ? Séparez-les par une virgule ou un point-virgule.</div>
 
-      <table id="participantsTable" class="participants-table">
-        <thead>
-          <tr><th>Nom</th><th>Actif</th><th>Actions</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="table-wrapper">
+        <table id="participantsTable" class="participants-table">
+          <thead>
+            <tr><th>Nom</th><th>Actif</th><th>Actions</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
 
-      <div class="options-row">
-        <div>
+    <!-- Carte options -->
+    <div class="card">
+      <div class="card-title">Options</div>
+
+      <div class="options-bar">
+        <label>
           <input type="checkbox" id="skipWeekends" checked>
-          <label for="skipWeekends">Ignorer les week‑ends</label>
-        </div>
+          Ignorer les week‑ends
+        </label>
         <div class="date-group">
           <label for="startDate">Date de début :</label>
           <input type="date" id="startDate">
         </div>
       </div>
 
-      <!-- Section exclusions groupe (collapsible) -->
+      <!-- Exclusions groupe -->
       <div class="group-excl-toggle" id="groupExclToggle">
         <span class="group-excl-arrow" id="groupExclArrow">▶</span>
         <span class="group-excl-toggle-label">Jours exclus (groupe)</span>
@@ -436,9 +571,9 @@
       </div>
       <div class="group-excl-panel" id="groupExclPanel">
         <div class="group-excl-panel-title">
-          Définir des jours récurrents à ignorer pour tout le groupe (ex : chaque 2ᵉ mardi à partir d'une date de référence)
+          Jours récurrents ignorés pour tout le groupe (ex : chaque 2ᵉ mardi)
         </div>
-        <div class="group-excl-form" id="groupExclForm">
+        <div class="group-excl-form">
           <label>Jour :</label>
           <select id="exclDayOfWeek">
             <option value="1">Lundi</option>
@@ -451,20 +586,19 @@
           </select>
           <label>toutes les</label>
           <input type="number" id="exclEveryN" value="2" min="1" max="52">
-          <label>semaine(s) — à partir du</label>
+          <label>sem. — à partir du</label>
           <input type="date" id="exclRefDate">
-          <button id="exclAddBtn">+ Ajouter</button>
+          <button id="exclAddBtn">＋ Ajouter</button>
         </div>
         <div class="group-excl-tags" id="groupExclTags"></div>
       </div>
 
-      <button id="selectButton"><span aria-hidden="true">🎲</span> Lancer la sélection</button>
+      <button class="btn-launch" id="selectButton">🎲 Lancer la sélection</button>
     </div>
 
-    <div id="scheduleArea">
-      <h2 id="scheduleTitle" style="display:none;">Planning généré :</h2>
-      <div id="schedule"></div>
-    </div>
+    <!-- Résultat -->
+    <div id="scheduleArea"></div>
+
   </div>
 
   <script>
@@ -490,15 +624,7 @@
     }
 
     function isWeekend(date) {
-      const day = date.getDay();
-      return day === 0 || day === 6;
-    }
-
-    function nextBusinessDate(date, skipWeekends) {
-      const next = new Date(date);
-      do { next.setDate(next.getDate() + 1); }
-      while (skipWeekends && isWeekend(next));
-      return next;
+      return date.getDay() === 0 || date.getDay() === 6;
     }
 
     function formatDateFr(date) {
@@ -507,10 +633,9 @@
       });
     }
 
-    // Noms courts des jours pour affichage dans les tags
     const DAY_NAMES = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
 
-    // ─── Vérification indispo individuelle ───────────────────────────────────────
+    // ─── Indispos individuelles ───────────────────────────────────────────────────
 
     function isDateIndispo(date, indispos) {
       const ymd = toYMD(date);
@@ -521,13 +646,7 @@
       });
     }
 
-    // ─── Vérification exclusion groupe (récurrence alternée) ─────────────────────
-    //
-    // Une règle groupe = { dayOfWeek: 2, everyN: 2, refDate: "2025-03-04" }
-    // Une date est exclue si :
-    //   - son jour de semaine correspond à dayOfWeek
-    //   - le nombre de semaines écoulées depuis refDate est un multiple de everyN
-    //     (i.e. Math.floor(diffJours / 7) % everyN === 0)
+    // ─── Exclusions groupe ────────────────────────────────────────────────────────
 
     function isDateGroupExcluded(date, rules) {
       if (!rules || rules.length === 0) return false;
@@ -535,40 +654,29 @@
       return rules.some(rule => {
         if (dow !== rule.dayOfWeek) return false;
         const ref = parseYMD(rule.refDate);
-        const diffMs = date.getTime() - ref.getTime();
-        const diffDays = Math.round(diffMs / 86400000);
-        if (diffDays < 0) return false; // avant la date de référence : non concerné
-        const weeksSinceRef = Math.floor(diffDays / 7);
-        return weeksSinceRef % rule.everyN === 0;
+        const diffDays = Math.round((date.getTime() - ref.getTime()) / 86400000);
+        if (diffDays < 0) return false;
+        return Math.floor(diffDays / 7) % rule.everyN === 0;
       });
     }
 
-    // ─── Données participants ─────────────────────────────────────────────────────
+    // ─── Données ─────────────────────────────────────────────────────────────────
 
     let participants = [];
+    let groupExclusions = [];
 
     function loadParticipants() {
-      try {
-        const stored = localStorage.getItem('participants');
-        if (stored) participants = JSON.parse(stored);
-      } catch (e) { participants = []; }
+      try { const s = localStorage.getItem('participants'); if (s) participants = JSON.parse(s); }
+      catch (e) { participants = []; }
     }
-
     function saveParticipants() {
       localStorage.setItem('participants', JSON.stringify(participants));
     }
 
-    // ─── Données exclusions groupe ────────────────────────────────────────────────
-
-    let groupExclusions = [];
-
     function loadGroupExclusions() {
-      try {
-        const stored = localStorage.getItem('groupExclusions');
-        if (stored) groupExclusions = JSON.parse(stored);
-      } catch (e) { groupExclusions = []; }
+      try { const s = localStorage.getItem('groupExclusions'); if (s) groupExclusions = JSON.parse(s); }
+      catch (e) { groupExclusions = []; }
     }
-
     function saveGroupExclusions() {
       localStorage.setItem('groupExclusions', JSON.stringify(groupExclusions));
     }
@@ -595,29 +703,25 @@
       groupExclusions.forEach((rule, idx) => {
         const tag = document.createElement('span');
         tag.className = 'group-excl-tag';
-
-        const dayName = DAY_NAMES[rule.dayOfWeek];
-        const freq = rule.everyN === 1 ? 'chaque' : `1 sur ${rule.everyN}`;
-        const label = `${freq} ${dayName} (réf. ${formatDateFr(parseYMD(rule.refDate))})`;
-        tag.appendChild(document.createTextNode(label + ' '));
-
-        const removeBtn = document.createElement('button');
-        removeBtn.textContent = '✕';
-        removeBtn.title = 'Supprimer cette règle';
-        removeBtn.addEventListener('click', () => {
+        const freq = rule.everyN === 1 ? 'Chaque' : `1/${rule.everyN}`;
+        tag.appendChild(document.createTextNode(
+          `${freq} ${DAY_NAMES[rule.dayOfWeek]} (réf. ${formatDateFr(parseYMD(rule.refDate))}) `
+        ));
+        const btn = document.createElement('button');
+        btn.textContent = '✕';
+        btn.addEventListener('click', () => {
           groupExclusions.splice(idx, 1);
           saveGroupExclusions();
           renderGroupExclusions();
         });
-        tag.appendChild(removeBtn);
+        tag.appendChild(btn);
         tagsDiv.appendChild(tag);
       });
     }
 
-    // ─── Collapsible exclusions groupe ───────────────────────────────────────────
+    // ─── Collapsible ─────────────────────────────────────────────────────────────
 
     let groupExclOpen = false;
-
     document.getElementById('groupExclToggle').addEventListener('click', () => {
       groupExclOpen = !groupExclOpen;
       document.getElementById('groupExclPanel').classList.toggle('open', groupExclOpen);
@@ -628,25 +732,19 @@
       const dow    = parseInt(document.getElementById('exclDayOfWeek').value, 10);
       const everyN = parseInt(document.getElementById('exclEveryN').value, 10);
       const ref    = document.getElementById('exclRefDate').value;
-
       if (!ref) { alert('Veuillez saisir une date de référence.'); return; }
       if (isNaN(everyN) || everyN < 1) { alert('La fréquence doit être ≥ 1.'); return; }
-
-      // La date de référence doit être un jour qui correspond au dayOfWeek choisi
       const refDate = parseYMD(ref);
       if (refDate.getDay() !== dow) {
-        const dayName = DAY_NAMES[dow];
-        alert(`La date de référence doit être un ${dayName} (pour définir quelle occurrence est exclue).`);
-        return;
+        alert(`La date de référence doit être un ${DAY_NAMES[dow]}.`); return;
       }
-
       groupExclusions.push({ dayOfWeek: dow, everyN, refDate: ref });
       saveGroupExclusions();
       renderGroupExclusions();
       document.getElementById('exclRefDate').value = '';
     });
 
-    // ─── Rendu tableau participants ───────────────────────────────────────────────
+    // ─── Rendu participants ───────────────────────────────────────────────────────
 
     const openIndispoPanels = new Set();
 
@@ -654,25 +752,36 @@
       const tbody = document.querySelector('#participantsTable tbody');
       tbody.innerHTML = '';
 
+      if (participants.length === 0) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 3;
+        td.style.cssText = 'text-align:center;color:#94a3b8;font-size:.85em;padding:1.4em;font-style:italic';
+        td.textContent = 'Aucun participant — ajoutez des noms ci-dessus.';
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+      }
+
       participants.forEach((participant) => {
         const tr = document.createElement('tr');
         if (!participant.active) tr.classList.add('inactive');
 
-        // Nom + badge indispos
+        // Nom + badge
         const nameTd = document.createElement('td');
         const nameSpan = document.createElement('span');
         nameSpan.textContent = participant.name;
         nameTd.appendChild(nameSpan);
-        const indispoCount = (participant.indispos || []).length;
-        if (indispoCount > 0) {
+        const ic = (participant.indispos || []).length;
+        if (ic > 0) {
           const badge = document.createElement('span');
           badge.className = 'indispo-badge';
-          badge.title = `${indispoCount} indisponibilité${indispoCount > 1 ? 's' : ''} enregistrée${indispoCount > 1 ? 's' : ''}`;
-          badge.textContent = `${indispoCount} indispo${indispoCount > 1 ? 's' : ''}`;
+          badge.title = `${ic} indisponibilité${ic > 1 ? 's' : ''} enregistrée${ic > 1 ? 's' : ''}`;
+          badge.textContent = `${ic} indispo${ic > 1 ? 's' : ''}`;
           nameTd.appendChild(badge);
         }
 
-        // Statut actif
+        // Actif
         const activeTd = document.createElement('td');
         const toggle = document.createElement('input');
         toggle.type = 'checkbox';
@@ -692,14 +801,11 @@
         editBtn.title = 'Modifier le nom';
         editBtn.textContent = '✏️';
         editBtn.addEventListener('click', () => {
-          const nouveauNom = prompt('Modifier le nom :', participant.name);
-          if (nouveauNom !== null) {
-            const trimmed = nouveauNom.trim();
-            if (trimmed.length > 0) {
-              participant.name = trimmed;
-              saveParticipants();
-              renderParticipants();
-            }
+          const n = prompt('Modifier le nom :', participant.name);
+          if (n !== null && n.trim().length > 0) {
+            participant.name = n.trim();
+            saveParticipants();
+            renderParticipants();
           }
         });
 
@@ -708,20 +814,18 @@
         indispoBtn.title = 'Gérer les indisponibilités';
         indispoBtn.textContent = '📅';
         indispoBtn.addEventListener('click', () => {
-          if (openIndispoPanels.has(participant.id)) {
-            openIndispoPanels.delete(participant.id);
-          } else {
-            openIndispoPanels.add(participant.id);
-          }
+          openIndispoPanels.has(participant.id)
+            ? openIndispoPanels.delete(participant.id)
+            : openIndispoPanels.add(participant.id);
           renderParticipants();
         });
 
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'action-btn delete-btn';
-        deleteBtn.title = 'Supprimer le participant';
+        deleteBtn.title = 'Supprimer';
         deleteBtn.textContent = '🗑️';
         deleteBtn.addEventListener('click', () => {
-          if (confirm('Supprimer ce participant ?')) {
+          if (confirm(`Supprimer ${participant.name} ?`)) {
             participants = participants.filter(p => p.id !== participant.id);
             openIndispoPanels.delete(participant.id);
             saveParticipants();
@@ -738,7 +842,7 @@
         tr.appendChild(actionsTd);
         tbody.appendChild(tr);
 
-        // Panneau indispo inline
+        // Panneau indispo
         if (openIndispoPanels.has(participant.id)) {
           const indispoTr = document.createElement('tr');
           indispoTr.className = 'indispo-row';
@@ -754,13 +858,12 @@
 
     function buildIndispoPanel(participant) {
       if (!participant.indispos) participant.indispos = [];
-
       const panel = document.createElement('div');
       panel.className = 'indispo-panel';
 
       const title = document.createElement('div');
       title.className = 'indispo-panel-title';
-      title.textContent = `Indisponibilités de ${participant.name}`;
+      title.textContent = `Indisponibilités — ${participant.name}`;
       panel.appendChild(title);
 
       const form = document.createElement('div');
@@ -774,31 +877,28 @@
       const date1Label = document.createElement('label');
       const date1Input = document.createElement('input');
       date1Input.type = 'date';
-
       const date2Label = document.createElement('label');
       date2Label.textContent = 'au :';
       const date2Input = document.createElement('input');
       date2Input.type = 'date';
 
-      function updateDateFields() {
-        const isRange = typeSelect.value === 'range';
-        date2Label.style.display = isRange ? '' : 'none';
-        date2Input.style.display = isRange ? '' : 'none';
-        date1Label.textContent = isRange ? 'Du :' : 'Date :';
+      function updateFields() {
+        const r = typeSelect.value === 'range';
+        date2Label.style.display = r ? '' : 'none';
+        date2Input.style.display = r ? '' : 'none';
+        date1Label.textContent = r ? 'Du :' : 'Date :';
       }
-      typeSelect.addEventListener('change', updateDateFields);
-      updateDateFields();
+      typeSelect.addEventListener('change', updateFields);
+      updateFields();
 
       const addBtn = document.createElement('button');
-      addBtn.textContent = '+ Ajouter';
+      addBtn.textContent = '＋ Ajouter';
       addBtn.addEventListener('click', () => {
-        const type = typeSelect.value;
-        const d1 = date1Input.value;
-        const d2 = date2Input.value;
+        const type = typeSelect.value, d1 = date1Input.value, d2 = date2Input.value;
         if (!d1) { alert('Veuillez saisir une date.'); return; }
         if (type === 'range') {
           if (!d2) { alert('Veuillez saisir la date de fin.'); return; }
-          if (d2 < d1) { alert('La date de fin doit être après la date de début.'); return; }
+          if (d2 < d1) { alert('La date de fin doit être après le début.'); return; }
           participant.indispos.push({ type: 'range', date1: d1, date2: d2 });
         } else {
           if (participant.indispos.some(i => i.type === 'day' && i.date1 === d1)) {
@@ -806,19 +906,12 @@
           }
           participant.indispos.push({ type: 'day', date1: d1 });
         }
-        date1Input.value = '';
-        date2Input.value = '';
+        date1Input.value = date2Input.value = '';
         saveParticipants();
         renderParticipants();
       });
 
-      form.appendChild(typeLabel);
-      form.appendChild(typeSelect);
-      form.appendChild(date1Label);
-      form.appendChild(date1Input);
-      form.appendChild(date2Label);
-      form.appendChild(date2Input);
-      form.appendChild(addBtn);
+      form.append(typeLabel, typeSelect, date1Label, date1Input, date2Label, date2Input, addBtn);
       panel.appendChild(form);
 
       const tagsDiv = document.createElement('div');
@@ -830,27 +923,26 @@
         empty.textContent = 'Aucune indisponibilité enregistrée.';
         tagsDiv.appendChild(empty);
       } else {
-        const sorted = [...participant.indispos].sort((a, b) => a.date1.localeCompare(b.date1));
-        sorted.forEach(ind => {
-          const tag = document.createElement('span');
-          tag.className = 'indispo-tag';
-          const label = ind.type === 'day'
-            ? formatDateFr(parseYMD(ind.date1))
-            : `${formatDateFr(parseYMD(ind.date1))} → ${formatDateFr(parseYMD(ind.date2))}`;
-          tag.appendChild(document.createTextNode(label + ' '));
-          const removeBtn = document.createElement('button');
-          removeBtn.textContent = '✕';
-          removeBtn.title = 'Supprimer cette indisponibilité';
-          removeBtn.addEventListener('click', () => {
-            participant.indispos = participant.indispos.filter(i => i !== ind);
-            saveParticipants();
-            renderParticipants();
+        [...participant.indispos]
+          .sort((a, b) => a.date1.localeCompare(b.date1))
+          .forEach(ind => {
+            const tag = document.createElement('span');
+            tag.className = 'indispo-tag';
+            const label = ind.type === 'day'
+              ? formatDateFr(parseYMD(ind.date1))
+              : `${formatDateFr(parseYMD(ind.date1))} → ${formatDateFr(parseYMD(ind.date2))}`;
+            tag.appendChild(document.createTextNode(label + ' '));
+            const btn = document.createElement('button');
+            btn.textContent = '✕';
+            btn.addEventListener('click', () => {
+              participant.indispos = participant.indispos.filter(i => i !== ind);
+              saveParticipants();
+              renderParticipants();
+            });
+            tag.appendChild(btn);
+            tagsDiv.appendChild(tag);
           });
-          tag.appendChild(removeBtn);
-          tagsDiv.appendChild(tag);
-        });
       }
-
       panel.appendChild(tagsDiv);
       return panel;
     }
@@ -860,9 +952,8 @@
     document.getElementById('addButton').addEventListener('click', () => {
       const input = document.getElementById('newName');
       const raw = input.value.trim();
-      if (raw === '') { alert('Veuillez saisir un nom.'); return; }
-      const names = raw.split(/[,;]+/).map(n => n.trim()).filter(n => n.length > 0);
-      names.forEach(name => {
+      if (!raw) { alert('Veuillez saisir un nom.'); return; }
+      raw.split(/[,;]+/).map(n => n.trim()).filter(n => n).forEach(name => {
         participants.push({ id: Date.now() + Math.random(), name, active: true, indispos: [] });
       });
       saveParticipants();
@@ -885,92 +976,89 @@
 
     document.getElementById('selectButton').addEventListener('click', () => {
       const skipWeekends = document.getElementById('skipWeekends').checked;
-      const scheduleDiv   = document.getElementById('schedule');
-      const scheduleTitle = document.getElementById('scheduleTitle');
-      scheduleDiv.innerHTML = '';
-      scheduleTitle.style.display = 'none';
+      const area = document.getElementById('scheduleArea');
+      area.innerHTML = '';
 
-      const activeParticipants = participants.filter(p => p.active);
-      if (activeParticipants.length === 0) {
-        alert('Aucun participant actif à planifier.');
-        return;
-      }
+      const active = participants.filter(p => p.active);
+      if (active.length === 0) { alert('Aucun participant actif.'); return; }
 
-      const startDateVal = document.getElementById('startDate').value;
-      let startDate = startDateVal ? parseYMD(startDateVal) : new Date();
+      const startVal = document.getElementById('startDate').value;
+      let start = startVal ? parseYMD(startVal) : new Date();
 
-      // Avancer si le jour de départ est un week-end ou exclu groupe
-      const limit0 = new Date(startDate);
+      const limit0 = new Date(start);
       limit0.setFullYear(limit0.getFullYear() + 1);
-      while (startDate <= limit0) {
-        if (skipWeekends && isWeekend(startDate)) { startDate.setDate(startDate.getDate() + 1); continue; }
-        if (isDateGroupExcluded(startDate, groupExclusions)) { startDate.setDate(startDate.getDate() + 1); continue; }
+      while (start <= limit0) {
+        if (skipWeekends && isWeekend(start))           { start.setDate(start.getDate() + 1); continue; }
+        if (isDateGroupExcluded(start, groupExclusions)) { start.setDate(start.getDate() + 1); continue; }
         break;
       }
 
-      const shuffled = [...activeParticipants];
+      const shuffled = [...active];
       shuffle(shuffled);
 
       const rows = [];
-      let currentDate = new Date(startDate);
+      let cur = new Date(start);
 
-      for (const participant of shuffled) {
-        let candidate = new Date(currentDate);
-        const limit = new Date(currentDate);
-        limit.setFullYear(limit.getFullYear() + 1);
+      for (const p of shuffled) {
+        let cand = new Date(cur);
+        const lim = new Date(cur);
+        lim.setFullYear(lim.getFullYear() + 1);
 
         let found = false;
-        while (candidate <= limit) {
-          if (skipWeekends && isWeekend(candidate)) {
-            candidate.setDate(candidate.getDate() + 1); continue;
-          }
-          if (isDateGroupExcluded(candidate, groupExclusions)) {
-            candidate.setDate(candidate.getDate() + 1); continue;
-          }
-          if (isDateIndispo(candidate, participant.indispos || [])) {
-            candidate.setDate(candidate.getDate() + 1); continue;
-          }
-          found = true;
-          break;
+        while (cand <= lim) {
+          if (skipWeekends && isWeekend(cand))             { cand.setDate(cand.getDate() + 1); continue; }
+          if (isDateGroupExcluded(cand, groupExclusions))  { cand.setDate(cand.getDate() + 1); continue; }
+          if (isDateIndispo(cand, p.indispos || []))        { cand.setDate(cand.getDate() + 1); continue; }
+          found = true; break;
         }
-
         if (!found) continue;
 
-        rows.push({ date: new Date(candidate), name: participant.name });
+        rows.push({ date: new Date(cand), name: p.name });
 
-        // Avancer au prochain jour dispo (hors week-end et hors exclusions groupe)
-        let next = new Date(candidate);
-        const limitNext = new Date(candidate);
-        limitNext.setFullYear(limitNext.getFullYear() + 1);
-        do {
-          next.setDate(next.getDate() + 1);
-        } while (next <= limitNext && (
-          (skipWeekends && isWeekend(next)) ||
-          isDateGroupExcluded(next, groupExclusions)
-        ));
-        currentDate = next;
+        let next = new Date(cand);
+        const limNext = new Date(cand); limNext.setFullYear(limNext.getFullYear() + 1);
+        do { next.setDate(next.getDate() + 1); }
+        while (next <= limNext && ((skipWeekends && isWeekend(next)) || isDateGroupExcluded(next, groupExclusions)));
+        cur = next;
       }
+
+      // Rendu
+      const wrapper = document.createElement('div');
+      wrapper.className = 'result-card';
+
+      const header = document.createElement('div');
+      header.className = 'result-header';
+      header.innerHTML = `<span>📋</span> Planning généré — ${rows.length} session${rows.length > 1 ? 's' : ''}`;
+      wrapper.appendChild(header);
 
       if (rows.length === 0) {
-        scheduleDiv.innerHTML = '<p style="color:#999;font-style:italic;">Aucun participant disponible sur la période.</p>';
-        scheduleTitle.style.display = '';
-        return;
+        const msg = document.createElement('p');
+        msg.style.cssText = 'padding:1.2em 1.3em;color:#94a3b8;font-style:italic;font-size:.9em';
+        msg.textContent = 'Aucun participant disponible sur la période.';
+        wrapper.appendChild(msg);
+      } else {
+        const tbl = document.createElement('table');
+        tbl.className = 'planning-table';
+        tbl.innerHTML = '<thead><tr><th>Date</th><th>Animateur</th></tr></thead>';
+        const tbody = document.createElement('tbody');
+        rows.forEach(row => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${formatDateFr(row.date)}</td><td>${row.name}</td>`;
+          tbody.appendChild(tr);
+        });
+        tbl.appendChild(tbody);
+        wrapper.appendChild(tbl);
       }
 
-      let html = '<table class="planning-table"><thead><tr><th>Date</th><th>Personne</th></tr></thead><tbody>';
-      rows.forEach(row => {
-        html += `<tr><td>${formatDateFr(row.date)}</td><td>${row.name}</td></tr>`;
-      });
-      html += '</tbody></table>';
-
-      const excluded = activeParticipants.filter(p => !rows.find(r => r.name === p.name));
+      const excluded = active.filter(p => !rows.find(r => r.name === p.name));
       if (excluded.length > 0) {
-        const names = excluded.map(p => p.name).join(', ');
-        html += `<p style="margin-top:0.8em;font-size:0.88em;color:#a06000;">⚠️ Exclus (aucun jour dispo) : <strong>${names}</strong></p>`;
+        const warn = document.createElement('div');
+        warn.className = 'result-warning';
+        warn.innerHTML = `⚠️ Exclus (aucun jour dispo) : <strong style="margin-left:.3em">${excluded.map(p => p.name).join(', ')}</strong>`;
+        wrapper.appendChild(warn);
       }
 
-      scheduleDiv.innerHTML = html;
-      scheduleTitle.style.display = '';
+      area.appendChild(wrapper);
     });
 
     // ─── Init ─────────────────────────────────────────────────────────────────────
